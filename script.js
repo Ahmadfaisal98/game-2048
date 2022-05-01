@@ -1,5 +1,5 @@
 import Grid from "./Grid.js"
-import Tile from "./TIle.js"
+import Tile from "./Tile.js"
 
 const gameBoard = document.getElementById("game-board")
 
@@ -99,11 +99,10 @@ function slideTiles(cells) {
           } else {
             lastValidCell.tile = cell.tile
           }
-
           cell.tile = null
         }
-        return promises
       }
+      return promises
     })
   )
 }

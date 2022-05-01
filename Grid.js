@@ -4,6 +4,7 @@ const CELL_GAP = 2
 
 export default class Grid {
   #cells
+
   constructor(gridElement) {
     gridElement.style.setProperty("--grid-size", GRID_SIZE)
     gridElement.style.setProperty("--cell-size", `${CELL_SIZE}vmin`)
@@ -72,6 +73,13 @@ class Cell {
     return this.#tile
   }
 
+  set tile(value) {
+    this.#tile = value
+    if (value == null) return
+    this.#tile.x = this.#x
+    this.#tile.y = this.#y
+  }
+
   get mergeTile() {
     return this.#mergeTile
   }
@@ -81,13 +89,6 @@ class Cell {
     if (value == null) return
     this.#mergeTile.x = this.#x
     this.#mergeTile.y = this.#y
-  }
-
-  set tile(value) {
-    this.#tile = value
-    if (value == null) return
-    this.#tile.x = this.#x
-    this.#tile.y = this.#y
   }
 
   canAccept(tile) {
