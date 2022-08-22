@@ -9,13 +9,91 @@ grid.randomEmptyCell().tile = new Tile(gameBoard);
 setupInput();
 
 function setupInput() {
-  window.addEventListener("click", handleInput, { once: true });
+  window.addEventListener("touchstart", handleTouchStart, { once: true });
+  window.addEventListener("touchmove", handleTouchMove, { once: true });
   window.addEventListener("keydown", handleInput, { once: true });
 }
 
+let initialY;
+let initialX;
+
+async function handleTouchStart(e) {
+  initialY = e.changedTouches[0].clientY;
+  initialX = e.changedTouches[0].clientX;
+}
+
+async function handleTouchMove(e) {
+  if (initialX === null) {
+    setupInput();
+    return;
+  }
+
+  if (initialY === null) {
+    setupInput();
+    return;
+  }
+
+  var currentX = e.touches[0].clientX;
+  var currentY = e.touches[0].clientY;
+
+  var diffX = initialX - currentX;
+  var diffY = initialY - currentY;
+
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    // sliding horizontally
+    if (diffX > 0) {
+      // swiped left
+      if (!canMoveLeft()) {
+        setupInput();
+        return;
+      }
+      await moveLeft();
+    } else {
+      // swiped right
+      if (!canMoveRight()) {
+        setupInput();
+        return;
+      }
+      await moveRight();
+    }
+  } else {
+    // sliding vertically
+    if (diffY > 0) {
+      // swiped up
+      if (!canMoveUp()) {
+        setupInput();
+        return;
+      }
+      await moveUp();
+    } else {
+      // swiped down
+      if (!canMoveDown()) {
+        setupInput();
+        return;
+      }
+      await moveDown();
+    }
+  }
+
+  initialX = null;
+  initialY = null;
+
+  grid.cells.forEach((cell) => cell.mergeTiles());
+
+  const newTile = new Tile(gameBoard);
+  grid.randomEmptyCell().tile = newTile;
+
+  if (!canMoveUp() && !canMoveDown() && !canMoveLeft() && !canMoveRight()) {
+    newTile.waitForTransition(true).then(() => {
+      alert("You lose");
+    });
+    return;
+  }
+
+  setupInput();
+}
+
 async function handleInput(e) {
-  console.log(e);
-  await moveUp();
   switch (e.key) {
     case "ArrowUp":
       if (!canMoveUp()) {
