@@ -9,10 +9,13 @@ grid.randomEmptyCell().tile = new Tile(gameBoard);
 setupInput();
 
 function setupInput() {
+  window.addEventListener("click", handleInput, { once: true });
   window.addEventListener("keydown", handleInput, { once: true });
 }
 
 async function handleInput(e) {
+  console.log(e);
+  await moveUp();
   switch (e.key) {
     case "ArrowUp":
       if (!canMoveUp()) {
